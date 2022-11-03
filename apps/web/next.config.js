@@ -17,6 +17,7 @@ const withTM = require("next-transpile-modules")([
 ]);
 
 const { withAxiom } = require("next-axiom");
+const { withSentryConfig } = require("@sentry/nextjs");
 const { i18n } = require("./next-i18next.config");
 
 if (!process.env.NEXTAUTH_SECRET) throw new Error("Please set NEXTAUTH_SECRET");
@@ -228,6 +229,18 @@ const nextConfig = {
 
     return redirects;
   },
+  sentry: {
+    hideSourceMaps: true,
+  },
 };
 
-module.exports = () => plugins.reduce((acc, next) => next(acc), nextConfig);
+const sentryWebpackPluginOptions = {
+  silent: true, // Suppresses all logs
+};
+
+const moduleExports = () => plugins.reduce((acc, next) => next(acc), nextConfig);
+
+// Sentry should be the last thing to export to catch everything right
+module.exports = process.env.NEXT_PUBLIC_SENTRY_DSN
+  ? withSentryConfig(moduleExports, sentryWebpackPluginOptions)
+  : moduleExports;
