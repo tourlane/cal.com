@@ -31,13 +31,14 @@ ENV NEXT_PUBLIC_WEBAPP_URL=$NEXT_PUBLIC_WEBAPP_URL \
     NEXTAUTH_SECRET=${NEXTAUTH_SECRET} \
     CALENDSO_ENCRYPTION_KEY=${CALENDSO_ENCRYPTION_KEY} \
     NODE_OPTIONS=--max-old-space-size=${MAX_OLD_SPACE_SIZE} \
-    GOOGLE_LOGIN_ENABLED=true
+    GOOGLE_LOGIN_ENABLED=true \
+    SENTRY_IGNORE_API_RESOLUTION_ERROR=1
 
 COPY package.json yarn.lock turbo.json ./
 COPY apps/web ./apps/web
 COPY packages ./packages
 
-RUN yarn config set network-timeout 1000000000 -g && \ 
+RUN yarn config set network-timeout 1000000000 -g && \
     yarn install --frozen-lockfile
 
 RUN yarn build
