@@ -23,7 +23,7 @@ docker_build:
 	       --build-arg GLOBAL_WEBHOOK_URL=${GLOBAL_WEBHOOK_URL} \
 	       --build-arg NEXT_PUBLIC_SENTRY_DSN=${NEXT_PUBLIC_SENTRY_DSN} \
 	       --build-arg SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN} \
-	       --build-arg ENVIRONMENT=${ENVIRONMENT} \
+	       --build-arg SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT} \
 	       -t ${IMAGE} .
 
 .PHONY: docker_push
