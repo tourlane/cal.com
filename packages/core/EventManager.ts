@@ -478,7 +478,11 @@ export default class EventManager {
           result.push(updateEvent(credential, event, bookingRefUid, bookingExternalCalendarId));
         } else {
           // This means the user has changed. Delete the old calendar event and create a new one!
-          credential = this.calendarCredentials.find((c) => c.type.endsWith("_calendar"));
+          credential = await prisma.credential.findUnique({
+            where: {
+              id: calendarReference.credentialId,
+            },
+          });
           if (credential) {
             try {
               await deleteEvent(credential, bookingRefUid, event);
@@ -487,11 +491,7 @@ export default class EventManager {
             }
           }
           // Assign the new user credential to `credential`
-          credential = await prisma.credential.findUnique({
-            where: {
-              id: calendarReference.credentialId,
-            },
-          });
+          credential = this.calendarCredentials.find((c) => c.type.endsWith("_calendar"));
           if (credential) {
             // createEvent expects a CredentialWithAppName
             credential = getApps([credential])
