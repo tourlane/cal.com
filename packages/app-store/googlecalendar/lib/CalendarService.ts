@@ -128,9 +128,7 @@ export default class GoogleCalendarService implements Calendar {
         },
         function (error, event) {
           if (error || !event?.data) {
-            Sentry.captureMessage(
-              `There was an error in "createEvent" contacting google calendar service: ${error}`
-            );
+            Sentry.captureException(error);
             console.error(`There was an error in "createEvent" contacting google calendar service: ${error}`);
 
             return reject(error);
@@ -229,9 +227,7 @@ export default class GoogleCalendarService implements Calendar {
         },
         function (err, evt) {
           if (err) {
-            Sentry.captureMessage(
-              `There was an error in "updateEvent" contacting google calendar service: ${err}`
-            );
+            Sentry.captureException(err);
             console.error(`There was an error in "updateEvent" contacting google calendar service: ${err}`);
 
             return reject(err);
@@ -293,9 +289,7 @@ export default class GoogleCalendarService implements Calendar {
              *  410 is when an event is already deleted on the Google cal before on cal.com
              *  404 is when the event is on a different calendar
              */
-            Sentry.captureMessage(
-              `There was an error in "deleteEvent" contacting google calendar service: ${err}`
-            );
+            Sentry.captureException(err);
 
             if (err.code === 410) return resolve();
             console.error("There was an error contacting google calendar service: ", err);
@@ -362,9 +356,8 @@ export default class GoogleCalendarService implements Calendar {
           );
         })
         .catch((err) => {
-          Sentry.captureMessage(
-            `There was an error in "getAvailability" contacting google calendar service: ${err}`
-          );
+          Sentry.captureException(err);
+
           this.log.error(
             `There was an error in "getAvailability" contacting google calendar service: ${err}`
           );
@@ -401,9 +394,7 @@ export default class GoogleCalendarService implements Calendar {
         })
         .catch((err: Error) => {
           this.log.error(`There was an error in "listCalendars" contacting google calendar service:  ${err}`);
-          Sentry.captureMessage(
-            `There was an error in "getAvailability" contacting google calendar service: ${err}`
-          );
+          Sentry.captureException(err);
 
           reject(err);
         });
