@@ -128,7 +128,9 @@ export default class GoogleCalendarService implements Calendar {
         },
         function (error, event) {
           if (error || !event?.data) {
-            console.error("There was an error contacting google calendar service: ", error);
+            Sentry.captureException(error);
+            console.error(`There was an error in "createEvent" contacting google calendar service: ${error}`);
+
             return reject(error);
           }
 
@@ -225,7 +227,8 @@ export default class GoogleCalendarService implements Calendar {
         },
         function (err, evt) {
           if (err) {
-            console.error("There was an error contacting google calendar service: ", err);
+            Sentry.captureException(err);
+            console.error(`There was an error in "updateEvent" contacting google calendar service: ${err}`);
 
             return reject(err);
           }
@@ -289,6 +292,8 @@ export default class GoogleCalendarService implements Calendar {
             if (err.code === 410) return resolve();
             console.error("There was an error contacting google calendar service: ", err);
             if (err.code === 404) return resolve();
+
+            Sentry.captureException(err);
             return reject(err);
           }
           return resolve(event?.data);
@@ -351,7 +356,11 @@ export default class GoogleCalendarService implements Calendar {
           );
         })
         .catch((err) => {
-          this.log.error("There was an error contacting google calendar service: ", err);
+          Sentry.captureException(err);
+
+          this.log.error(
+            `There was an error in "getAvailability" contacting google calendar service: ${err}`
+          );
 
           reject(err);
         });
@@ -384,7 +393,8 @@ export default class GoogleCalendarService implements Calendar {
           );
         })
         .catch((err: Error) => {
-          this.log.error("There was an error contacting google calendar service: ", err);
+          this.log.error(`There was an error in "listCalendars" contacting google calendar service:  ${err}`);
+          Sentry.captureException(err);
 
           reject(err);
         });
