@@ -1,1 +1,1 @@
-create unique index idx_userid_starttime on "Booking" ("userId", "startTime") where "userId" is not null and status = 'accepted';
+create unique index Booking_userId_startTime_idx on "Booking" ("userId", "startTime") where "userId" is not null and status = 'accepted';
