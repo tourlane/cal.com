@@ -1,6 +1,7 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { EventType } from "@prisma/client";
 import * as Popover from "@radix-ui/react-popover";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import type { NextRouter } from "next/router";
 import { useReducer, useEffect, useMemo, useState } from "react";
@@ -308,6 +309,7 @@ function getWeekStartFromRouterOrProfile(router: NextRouter, profile: Props["pro
 const AvailabilityPage = ({ profile, eventType, ...restProps }: Props) => {
   const router = useRouter();
   const isEmbed = useIsEmbed(restProps.isEmbed);
+  const { data: session } = useSession();
   const query = dateQuerySchema.parse(router.query);
   const { rescheduleUid } = query;
   useTheme(profile.theme);
@@ -373,6 +375,15 @@ const AvailabilityPage = ({ profile, eventType, ...restProps }: Props) => {
       ? ("rainbow" as Gate)
       : undefined,
   ];
+
+  // Only logged in users can see this page when it's not embedded.
+  if (!isEmbed && !session?.user?.id) {
+    return (
+      <p className="text-center">
+        {t("disabled")}. {t("contact_support")}.
+      </p>
+    );
+  }
 
   return (
     <Gates gates={gates} appData={rainbowAppData} dispatch={gateDispatcher}>
