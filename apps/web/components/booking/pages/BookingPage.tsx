@@ -535,6 +535,15 @@ const BookingPage = ({
       : undefined,
   ];
 
+  // Only logged in users can see this page when it's not embedded.
+  if (!isEmbed && !session?.user?.id) {
+    return (
+      <p className="text-center">
+        {t("disabled")}. {t("contact_support")}.
+      </p>
+    );
+  }
+
   return (
     <Gates gates={gates} appData={rainbowAppData} dispatch={gateDispatcher}>
       <Head>
