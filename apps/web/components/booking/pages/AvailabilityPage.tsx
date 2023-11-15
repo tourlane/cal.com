@@ -2,6 +2,7 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { EventType } from "@prisma/client";
 import * as Popover from "@radix-ui/react-popover";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import type { NextRouter } from "next/router";
 import { useReducer, useEffect, useMemo, useState } from "react";
@@ -33,6 +34,7 @@ import { detectBrowserTimeFormat, setIs24hClockInLocalStorage, TimeFormat } from
 import { EventTypeMetaDataSchema } from "@calcom/prisma/zod-utils";
 import { trpc } from "@calcom/trpc/react";
 import { HeadSeo } from "@calcom/ui";
+import { Button } from "@calcom/ui";
 import { FiChevronDown, FiChevronUp, FiCreditCard, FiGlobe, FiRefreshCcw } from "@calcom/ui/components/icon";
 
 import { timeZone as localStorageTimeZone } from "@lib/clock";
@@ -379,9 +381,11 @@ const AvailabilityPage = ({ profile, eventType, ...restProps }: Props) => {
   // Only logged in users can see this page when it's not embedded.
   if (!isEmbed && !session?.user?.id) {
     return (
-      <p className="text-center">
-        {t("disabled")}. {t("contact_support")}.
-      </p>
+      <div className="mt-4 text-center">
+        <Link href="/auth/login" passHref legacyBehavior>
+          <Button>{t("login")}</Button>
+        </Link>
+      </div>
     );
   }
 
