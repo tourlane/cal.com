@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { isValidPhoneNumber } from "libphonenumber-js";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useReducer, useState } from "react";
 import { useFieldArray, useForm, useWatch, Controller } from "react-hook-form";
@@ -538,9 +539,11 @@ const BookingPage = ({
   // Only logged in users can see this page when it's not embedded.
   if (!isEmbed && !session?.user?.id) {
     return (
-      <p className="text-center">
-        {t("disabled")}. {t("contact_support")}.
-      </p>
+      <div className="mt-4 text-center">
+        <Link href="/auth/login" passHref legacyBehavior>
+          <Button>{t("login")}</Button>
+        </Link>
+      </div>
     );
   }
 
