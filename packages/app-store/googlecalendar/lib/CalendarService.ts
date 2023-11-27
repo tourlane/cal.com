@@ -57,9 +57,10 @@ export default class GoogleCalendarService implements Calendar {
         });
         myGoogleAuth.setCredentials(googleCredentials);
       } catch (err) {
-        Sentry.captureMessage(
-          `Failed to refresh access token for Google Calendar: userId: ${credential.userId}`
-        );
+        // This happens so often that we are consuming all the Sentry quota.
+        // Sentry.captureMessage(
+        // `Failed to refresh access token for Google Calendar: userId: ${credential.userId}`
+        // );
         this.log.error("Error refreshing google token", err);
       }
       return myGoogleAuth;
