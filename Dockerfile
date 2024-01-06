@@ -1,4 +1,4 @@
-FROM node:16 as base
+FROM node:18 as base
 
 ARG NEXT_PUBLIC_WEBAPP_URL=http://localhost:3000
 ARG NEXT_PUBLIC_SLOTS_PROXY_URL
