@@ -1,4 +1,4 @@
-FROM node:16 as base
+FROM node:18 as base
 
 ARG NEXT_PUBLIC_WEBAPP_URL=http://localhost:3000
 ARG NEXT_PUBLIC_SLOTS_PROXY_URL
@@ -55,7 +55,7 @@ WORKDIR /calcom
 ENV NODE_ENV=production
 
 RUN apt-get update && \
-    apt-get -y install netcat sendmail && \
+    apt-get -y install sendmail && \
     rm -rf /var/lib/apt/lists/* && \
     npm install --global prisma
 
