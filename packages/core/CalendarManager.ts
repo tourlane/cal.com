@@ -182,7 +182,10 @@ export const getBusyCalendarTimes = async (
   try {
     results = await getCachedResults(withCredentials, dateFrom, dateTo, selectedCalendars);
   } catch (error) {
-    log.warn(error);
+    log.warn(
+      "Error fetching busy times from calendars",
+      selectedCalendars.map((sc) => sc.externalId)
+    );
   }
   return results.reduce((acc, availability) => acc.concat(availability), []);
 };
