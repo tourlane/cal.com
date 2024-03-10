@@ -125,6 +125,9 @@ async function getEventType(ctx: { prisma: typeof prisma }, input: z.infer<typeo
         select: {
           ...availabilityUserSelect,
         },
+        where: {
+          away: false,
+        },
       },
     },
   });
@@ -146,6 +149,7 @@ async function getDynamicEventType(ctx: { prisma: typeof prisma }, input: z.infe
       username: {
         in: input.usernameList,
       },
+      away: false,
     },
     select: {
       allowDynamicBooking: true,
