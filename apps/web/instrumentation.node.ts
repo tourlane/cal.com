@@ -1,11 +1,12 @@
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import { Resource } from "@opentelemetry/resources";
 import { NodeSDK } from "@opentelemetry/sdk-node";
-import { SimpleSpanProcessor } from "@opentelemetry/sdk-trace-base";
+import { SimpleSpanProcessor } from "@opentelemetry/sdk-trace-node";
+import { SEMRESATTRS_SERVICE_NAME } from "@opentelemetry/semantic-conventions";
 
 const sdk = new NodeSDK({
   resource: new Resource({
-    "service.name": "cal.com",
+    [SEMRESATTRS_SERVICE_NAME]: "cal.com",
   }),
   spanProcessor: new SimpleSpanProcessor(new OTLPTraceExporter()),
 });
