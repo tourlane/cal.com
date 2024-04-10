@@ -23,6 +23,8 @@
     "yarn": ">=1.19.0 < 2.0.0"
   },
   "dependencies": {
+    "@opentelemetry/sdk-trace-web": "^1.23.0",
+    "@opentelemetry/exporter-trace-otlp-http": "0.50.0",
     "@boxyhq/saml-jackson": "1.7.1",
     "@calcom/app-store": "*",
     "@calcom/app-store-cli": "*",
