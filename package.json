@@ -81,7 +81,7 @@
   },
   "dependencies": {
     "dompurify": "^2.4.1",
-    "turbo": "^1.4.3"
+    "turbo": "^1.13.2"
   },
   "resolutions": {
     "@apidevtools/json-schema-ref-parser": "9.0.9",

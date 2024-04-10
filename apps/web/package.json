@@ -19,10 +19,18 @@
     "check-changed-files": "ts-node scripts/ts-check-changed-files.ts"
   },
   "engines": {
-    "node": "16.x || 18.x",
+    "node": "18.x",
     "yarn": ">=1.19.0 < 2.0.0"
   },
   "dependencies": {
+    "perf_hooks": "0.0.1",
+    "universal-perf-hooks": "1.0.1",
+    "@opentelemetry/auto-instrumentations-web": "0.38.0",
+    "@opentelemetry/sdk-trace-node": "1.23.0",
+    "@opentelemetry/instrumentation": "0.50.0",
+    "@opentelemetry/auto-instrumentations-node": "0.44.0",
+    "@vercel/otel": "1.8.1",
+    "@opentelemetry/sdk-node": "0.50.0",
     "@opentelemetry/sdk-trace-web": "^1.23.0",
     "@opentelemetry/exporter-trace-otlp-http": "0.50.0",
     "@boxyhq/saml-jackson": "1.7.1",
@@ -85,7 +93,7 @@
     "memory-cache": "^0.2.0",
     "micro": "^9.4.1",
     "mime-types": "^2.1.35",
-    "next": "^13.2.1",
+    "next": "13.5.6",
     "next-auth": "^4.20.1",
     "next-axiom": "^0.16.0",
     "next-collect": "^0.2.1",
