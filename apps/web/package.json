@@ -23,15 +23,9 @@
     "yarn": ">=1.19.0 < 2.0.0"
   },
   "dependencies": {
-    "perf_hooks": "0.0.1",
-    "universal-perf-hooks": "1.0.1",
-    "@opentelemetry/auto-instrumentations-web": "0.38.0",
     "@opentelemetry/sdk-trace-node": "1.23.0",
     "@opentelemetry/instrumentation": "0.50.0",
-    "@opentelemetry/auto-instrumentations-node": "0.44.0",
-    "@vercel/otel": "1.8.1",
     "@opentelemetry/sdk-node": "0.50.0",
-    "@opentelemetry/sdk-trace-web": "^1.23.0",
     "@opentelemetry/exporter-trace-otlp-http": "0.50.0",
     "@boxyhq/saml-jackson": "1.7.1",
     "@calcom/app-store": "*",
