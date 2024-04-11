@@ -18,6 +18,7 @@ docker_build:
 	docker build \
 	       --network host \
 	       --build-arg DATABASE_URL=${DATABASE_URL} \
+	       --build-arg OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT} \
 	       --build-arg 'GOOGLE_API_CREDENTIALS=${GOOGLE_API_CREDENTIALS}' \
 	       --build-arg NEXT_PUBLIC_WEBAPP_URL=${NEXT_PUBLIC_WEBAPP_URL} \
 	       --build-arg NEXT_PUBLIC_SLOTS_PROXY_URL=${NEXT_PUBLIC_SLOTS_PROXY_URL} \
