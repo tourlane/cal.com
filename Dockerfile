@@ -38,6 +38,7 @@ ENV NEXT_PUBLIC_WEBAPP_URL=$NEXT_PUBLIC_WEBAPP_URL \
 FROM base as builder
 
 ENV NODE_OPTIONS=--max-old-space-size=4096
+ENV OTEL_NODE_ENABLED_INSTRUMENTATIONS="connect,http,express,pg,redis"
 
 WORKDIR /calcom
 COPY package.json yarn.lock turbo.json ./
