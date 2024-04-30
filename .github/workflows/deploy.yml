@@ -61,6 +61,11 @@ jobs:
           ssm_parameter: "/cal/shared/GLOBAL_WEBHOOK_SECRET"
           env_variable_name: "GLOBAL_WEBHOOK_SECRET"
 
+      - uses: "marvinpinto/action-inject-ssm-secrets@latest"
+        with:
+          ssm_parameter: "/jaeger/staging/otlp_endpoint"
+          env_variable_name: "OTEL_EXPORTER_OTLP_ENDPOINT"
+
       - name: Login to ECR
         uses: docker/login-action@v1
         with:
