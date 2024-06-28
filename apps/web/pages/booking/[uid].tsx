@@ -495,7 +495,8 @@ export default function Success(props: SuccessProps) {
                         </div>
                       </>
                     )}
-                    {customInputs &&
+                    {userIsOwner &&
+                      customInputs &&
                       Object.keys(customInputs).map((key) => {
                         // This breaks if you have two label that are the same.
                         // TODO: Fix this in another PR
