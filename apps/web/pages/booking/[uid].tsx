@@ -495,13 +495,17 @@ export default function Success(props: SuccessProps) {
                         </div>
                       </>
                     )}
-                    {sessionStatus === "authenticated" &&
-                      customInputs &&
+                    {customInputs &&
                       Object.keys(customInputs).map((key) => {
                         // This breaks if you have two label that are the same.
                         // TODO: Fix this in another PR
                         const customInput = customInputs[key as keyof typeof customInputs];
                         const eventTypeCustomFound = eventType.customInputs?.find((ci) => ci.label === key);
+                        const showHiddenInputs =
+                          eventTypeCustomFound?.type === "HIDDEN" && sessionStatus === "authenticated";
+                        if (!showHiddenInputs) {
+                          return null;
+                        }
                         return (
                           <>
                             {eventTypeCustomFound?.type === "RADIO" && (
