@@ -209,7 +209,7 @@ export default function Success(props: SuccessProps) {
       : "Nameless";
 
   const [is24h, setIs24h] = useState(isBrowserLocale24h());
-  const { data: session } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
 
   const [date, setDate] = useState(dayjs.utc(props.bookingInfo.startTime));
   const { eventType, bookingInfo } = props;
@@ -495,7 +495,7 @@ export default function Success(props: SuccessProps) {
                         </div>
                       </>
                     )}
-                    {userIsOwner &&
+                    {sessionStatus === "authenticated" &&
                       customInputs &&
                       Object.keys(customInputs).map((key) => {
                         // This breaks if you have two label that are the same.
