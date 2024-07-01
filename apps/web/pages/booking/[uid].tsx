@@ -209,7 +209,7 @@ export default function Success(props: SuccessProps) {
       : "Nameless";
 
   const [is24h, setIs24h] = useState(isBrowserLocale24h());
-  const { data: session } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
 
   const [date, setDate] = useState(dayjs.utc(props.bookingInfo.startTime));
   const { eventType, bookingInfo } = props;
@@ -501,6 +501,9 @@ export default function Success(props: SuccessProps) {
                         // TODO: Fix this in another PR
                         const customInput = customInputs[key as keyof typeof customInputs];
                         const eventTypeCustomFound = eventType.customInputs?.find((ci) => ci.label === key);
+                        if (eventTypeCustomFound?.type === "HIDDEN" && sessionStatus !== "authenticated") {
+                          return null;
+                        }
                         return (
                           <>
                             {eventTypeCustomFound?.type === "RADIO" && (
