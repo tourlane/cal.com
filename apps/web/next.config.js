@@ -2,20 +2,20 @@ require("dotenv").config({ path: "../../.env" });
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const { withSentryConfig } = require("@sentry/nextjs");
 const os = require("os");
-const withTM = require("next-transpile-modules")([
-  "@calcom/app-store",
-  "@calcom/core",
-  "@calcom/dayjs",
-  "@calcom/emails",
-  "@calcom/embed-core",
-  "@calcom/embed-react",
-  "@calcom/embed-snippet",
-  "@calcom/features",
-  "@calcom/lib",
-  "@calcom/prisma",
-  "@calcom/trpc",
-  "@calcom/ui",
-]);
+// const withTM = require("next-transpile-modules")([
+//   "@calcom/app-store",
+//   "@calcom/core",
+//   "@calcom/dayjs",
+//   "@calcom/emails",
+//   "@calcom/embed-core",
+//   "@calcom/embed-react",
+//   "@calcom/embed-snippet",
+//   "@calcom/features",
+//   "@calcom/lib",
+//   "@calcom/prisma",
+//   "@calcom/trpc",
+//   "@calcom/ui",
+// ]);
 
 const { withAxiom } = require("next-axiom");
 const { i18n } = require("./next-i18next.config");
@@ -80,11 +80,26 @@ if (process.env.ANALYZE === "true") {
   plugins.push(withBundleAnalyzer);
 }
 
-plugins.push(withTM);
+// plugins.push(withTM);
 plugins.push(withAxiom);
 
 /** @type {import("next").NextConfig} */
 const nextConfig = {
+  experimental: { instrumentationHook: true },
+  transpilePackages: [
+    "@calcom/app-store",
+    "@calcom/core",
+    "@calcom/dayjs",
+    "@calcom/emails",
+    "@calcom/embed-core",
+    "@calcom/embed-react",
+    "@calcom/embed-snippet",
+    "@calcom/features",
+    "@calcom/lib",
+    "@calcom/prisma",
+    "@calcom/trpc",
+    "@calcom/ui",
+  ],
   i18n,
   productionBrowserSourceMaps: true,
   /* We already do type check on GH actions */
@@ -104,7 +119,17 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  webpack: (config) => {
+  webpack: (config, { webpack, buildId, isServer }) => {
+    if (isServer) {
+      // Module not found fix @see https://github.com/boxyhq/jackson/issues/1535#issuecomment-1704381612
+      config.plugins.push(
+        new webpack.IgnorePlugin({
+          resourceRegExp:
+            /(^@google-cloud\/spanner|^@mongodb-js\/zstd|^@sap\/hana-client\/extension\/Stream$|^@sap\/hana-client|^@sap\/hana-client$|^aws-crt|^aws4$|^better-sqlite3$|^bson-ext$|^cardinal$|^cloudflare:sockets$|^hdb-pool$|^ioredis$|^kerberos$|^mongodb-client-encryption$|^mysql$|^oracledb$|^pg-native$|^pg-query-stream$|^react-native-sqlite-storage$|^snappy\/package\.json$|^snappy$|^sql.js$|^sqlite3$|^typeorm-aurora-data-api-driver$)/,
+        })
+      );
+    }
+
     config.plugins.push(
       new CopyWebpackPlugin({
         patterns: [
@@ -126,10 +151,15 @@ const nextConfig = {
       })
     );
 
+    config.plugins.push(new webpack.DefinePlugin({ "process.env.BUILD_ID": JSON.stringify(buildId) }));
+
     config.resolve.fallback = {
       ...config.resolve.fallback, // if you miss it, all the other options in fallback, specified
       // by next.js will be dropped. Doesn't make much sense, but how it is
       fs: false,
+      // ignore module resolve errors caused by the server component bundler
+      "pg-native": false,
+      "superagent-proxy": false,
     };
 
     /**
