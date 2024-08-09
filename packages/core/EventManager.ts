@@ -1,4 +1,5 @@
 import { DestinationCalendar } from "@prisma/client";
+import { BookingStatus } from "@prisma/client";
 import merge from "lodash/merge";
 import { v5 as uuidv5 } from "uuid";
 import { z } from "zod";
@@ -9,7 +10,6 @@ import { MeetLocationType } from "@calcom/app-store/locations";
 import getApps from "@calcom/app-store/utils";
 import logger from "@calcom/lib/logger";
 import prisma from "@calcom/prisma";
-import { Attendee, BookingStatus } from "@calcom/prisma/client";
 import { createdEventSchema } from "@calcom/prisma/zod-utils";
 import type {
   AdditionalInformation,
