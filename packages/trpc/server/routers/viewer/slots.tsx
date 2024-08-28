@@ -1,5 +1,4 @@
 import { SchedulingType, EventType, PeriodType } from "@prisma/client";
-import * as Sentry from "@sentry/nextjs";
 import { z } from "zod";
 
 import { BusyTimes, getBusyTimesByUserAndDay } from "@calcom/core/getBusyTimes";
@@ -159,11 +158,6 @@ async function getDynamicEventType(ctx: { prisma: typeof prisma }, input: z.infe
   });
   const isDynamicAllowed = !users.some((user) => !user.allowDynamicBooking);
   if (!isDynamicAllowed) {
-    Sentry.captureMessage("Some of the users in this group do not allow dynamic booking", {
-      extra: {
-        users,
-      },
-    });
     throw new TRPCError({
       message: "Some of the users in this group do not allow dynamic booking",
       code: "UNAUTHORIZED",
@@ -294,12 +288,6 @@ export async function getSchedule(input: z.infer<typeof getScheduleSchema>, ctx:
   }
 
   if (!startTime.isValid() || !endTime.isValid()) {
-    Sentry.captureMessage("Invalid time range given", {
-      extra: {
-        startTime: input.startTime,
-        endTime: input.endTime,
-      },
-    });
     throw new TRPCError({ message: "Invalid time range given.", code: "BAD_REQUEST" });
   }
 

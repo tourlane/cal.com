@@ -1,4 +1,3 @@
-import * as Sentry from "@sentry/nextjs";
 import schedule from "node-schedule";
 
 import prisma from "@calcom/prisma";
@@ -91,6 +90,5 @@ export async function cancelScheduledJobs(
     }
   } catch (error) {
     console.error("Error cancelling scheduled jobs", error);
-    Sentry.captureException(error);
   }
 }

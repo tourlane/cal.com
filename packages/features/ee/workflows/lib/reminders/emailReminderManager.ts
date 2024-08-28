@@ -7,7 +7,6 @@ import {
 } from "@prisma/client";
 import client from "@sendgrid/client";
 import sgMail from "@sendgrid/mail";
-import * as Sentry from "@sentry/nextjs";
 
 import dayjs from "@calcom/dayjs";
 import prisma from "@calcom/prisma";
@@ -206,6 +205,5 @@ export const deleteScheduledEmailReminder = async (referenceId: string) => {
     });
   } catch (error) {
     console.log(`Error canceling reminder with error ${error}`);
-    Sentry.captureException(error);
   }
 };
