@@ -1,4 +1,5 @@
 import { DestinationCalendar } from "@prisma/client";
+import { BookingStatus } from "@prisma/client";
 import merge from "lodash/merge";
 import { v5 as uuidv5 } from "uuid";
 import { z } from "zod";
@@ -9,7 +10,6 @@ import { MeetLocationType } from "@calcom/app-store/locations";
 import getApps from "@calcom/app-store/utils";
 import logger from "@calcom/lib/logger";
 import prisma from "@calcom/prisma";
-import { Attendee } from "@calcom/prisma/client";
 import { createdEventSchema } from "@calcom/prisma/zod-utils";
 import type {
   AdditionalInformation,
@@ -277,26 +277,17 @@ export default class EventManager {
       });
     }
 
-    // Now we can delete the old booking and its references.
-    const bookingReferenceDeletes = prisma.bookingReference.deleteMany({
-      where: {
-        bookingId: booking.id,
-      },
-    });
-    const attendeeDeletes = prisma.attendee.deleteMany({
-      where: {
-        bookingId: booking.id,
-      },
-    });
-
-    const bookingDeletes = prisma.booking.delete({
+    const bookingUpdate = prisma.booking.update({
       where: {
         id: booking.id,
       },
+      data: {
+        // TODO: use RESCHEDULED status
+        status: BookingStatus.CANCELLED,
+      },
     });
 
-    // Wait for all deletions to be applied.
-    await Promise.all([bookingReferenceDeletes, attendeeDeletes, bookingDeletes]);
+    await Promise.all([bookingUpdate]);
 
     // Very similar to what is done in create(). But a reschedule might update an event or create a new one.
     const referencesToCreate = results.map((result) => {
