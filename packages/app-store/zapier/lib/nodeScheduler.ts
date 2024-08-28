@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import schedule from "node-schedule";
 
 import prisma from "@calcom/prisma";

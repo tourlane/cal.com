@@ -7,6 +7,7 @@ import {
 } from "@prisma/client";
 import client from "@sendgrid/client";
 import sgMail from "@sendgrid/mail";
+import * as Sentry from "@sentry/nextjs";
 
 import dayjs from "@calcom/dayjs";
 import prisma from "@calcom/prisma";

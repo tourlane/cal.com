@@ -1,4 +1,5 @@
 import { SelectedCalendar } from "@prisma/client";
+import * as Sentry from "@sentry/nextjs";
 import { createHash } from "crypto";
 import _ from "lodash";
 

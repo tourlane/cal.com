@@ -6,6 +6,7 @@ import {
   WorkflowMethods,
   WorkflowReminder,
 } from "@prisma/client";
+import * as Sentry from "@sentry/nextjs";
 import { NextApiRequest } from "next";
 
 import { getCalendar } from "@calcom/app-store/_utils/getCalendar";
