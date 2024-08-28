@@ -1,4 +1,5 @@
 import { SchedulingType, EventType, PeriodType } from "@prisma/client";
+import * as Sentry from "@sentry/nextjs";
 import { z } from "zod";
 
 import { BusyTimes, getBusyTimesByUserAndDay } from "@calcom/core/getBusyTimes";
