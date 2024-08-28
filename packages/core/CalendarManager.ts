@@ -186,6 +186,7 @@ export const getBusyCalendarTimes = async (
       calendars: selectedCalendars,
       credentials: withCredentials,
     });
+    Sentry.captureException(error);
   }
   return results.reduce((acc, availability) => acc.concat(availability), []);
 };

@@ -182,6 +182,7 @@ async function handler(req: NextApiRequest & { userId?: number }) {
       smsReminderNumber: bookingToDelete.smsReminderNumber || undefined,
     }).catch((e) => {
       console.error(`Error executing webhook for event: ${eventTrigger}, URL: ${webhook.subscriberUrl}`, e);
+      Sentry.captureException(e);
     })
   );
   await Promise.all(promises);

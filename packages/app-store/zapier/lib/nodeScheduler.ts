@@ -90,5 +90,6 @@ export async function cancelScheduledJobs(
     }
   } catch (error) {
     console.error("Error cancelling scheduled jobs", error);
+    Sentry.captureException(error);
   }
 }

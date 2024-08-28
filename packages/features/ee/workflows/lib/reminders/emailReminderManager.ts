@@ -205,5 +205,6 @@ export const deleteScheduledEmailReminder = async (referenceId: string) => {
     });
   } catch (error) {
     console.log(`Error canceling reminder with error ${error}`);
+    Sentry.captureException(error);
   }
 };

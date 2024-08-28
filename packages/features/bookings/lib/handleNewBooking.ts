@@ -6,6 +6,7 @@ import {
   SchedulingType,
   WebhookTriggerEvents,
 } from "@prisma/client";
+import * as Sentry from "@sentry/nextjs";
 import async from "async";
 import { isValidPhoneNumber } from "libphonenumber-js";
 import { cloneDeep } from "lodash";
@@ -22,9 +23,8 @@ import { handlePayment } from "@calcom/app-store/stripepayment/lib/server";
 import { getEventTypeAppData } from "@calcom/app-store/utils";
 import { cancelScheduledJobs, scheduleTrigger } from "@calcom/app-store/zapier/lib/nodeScheduler";
 import EventManager from "@calcom/core/EventManager";
+import { getUserAvailability } from "@calcom/core/availability";
 import { getEventName } from "@calcom/core/event";
-import { getUserAvailability } from "@calcom/core/getUserAvailability";
-import dayjs from "@calcom/dayjs";
 import {
   sendAttendeeRequestEmail,
   sendOrganizerRequestEmail,
@@ -243,10 +243,11 @@ async function ensureAvailableUsers(
       } else {
         isAvailableToBeBooked = isAvailable(bufferedBusyTimes, input.dateFrom, eventType.length);
       }
-    } catch {
+    } catch (e) {
       log.debug({
         message: "Unable set isAvailableToBeBooked. Using true. ",
       });
+      Sentry.captureException(e);
     }
 
     if (isAvailableToBeBooked) {
@@ -311,6 +312,7 @@ async function handler(req: NextApiRequest & { userId?: number | undefined }) {
     log.debug({
       message: "Unable set timeOutOfBounds. Using false. ",
     });
+    Sentry.captureException(error);
   }
 
   if (timeOutOfBounds) {
@@ -772,6 +774,9 @@ async function handler(req: NextApiRequest & { userId?: number | undefined }) {
   } catch (_err) {
     const err = getErrorFromUnknown(_err);
     log.error(`Booking ${eventTypeId} failed`, "Error when saving booking to db", err.message);
+
+    Sentry.captureException(err);
+
     if (err.code === "P2002") {
       throw new HttpError({ statusCode: 409, message: "booking.conflict" });
     }
@@ -1007,6 +1012,7 @@ async function handler(req: NextApiRequest & { userId?: number | undefined }) {
       });
     } catch (error) {
       log.error("Error while running scheduledJobs for booking", error);
+      Sentry.captureException(error);
     }
 
     try {
@@ -1041,11 +1047,13 @@ async function handler(req: NextApiRequest & { userId?: number | undefined }) {
           smsReminderNumber: booking?.smsReminderNumber || undefined,
         }).catch((e) => {
           console.error(`Error executing webhook for event: ${eventTrigger}, URL: ${sub.subscriberUrl}`, e);
+          Sentry.captureException(e);
         })
       );
       await Promise.all(promises);
     } catch (error) {
       log.error("Error while sending webhook", error);
+      Sentry.captureException(error);
     }
   }
 
@@ -1067,6 +1075,7 @@ async function handler(req: NextApiRequest & { userId?: number | undefined }) {
     }
   } catch (error) {
     log.error("Error while updating hashed link", error);
+    Sentry.captureException(error);
   }
 
   if (!booking) throw new HttpError({ statusCode: 400, message: "Booking failed" });
@@ -1087,6 +1096,7 @@ async function handler(req: NextApiRequest & { userId?: number | undefined }) {
     });
   } catch (error) {
     log.error("Error while creating booking references", error);
+    Sentry.captureException(error);
   }
 
   try {
@@ -1100,6 +1110,7 @@ async function handler(req: NextApiRequest & { userId?: number | undefined }) {
     );
   } catch (error) {
     log.error("Error while scheduling workflow reminders", error);
+    Sentry.captureException(error);
   }
 
   // booking successful
