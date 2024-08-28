@@ -1,4 +1,5 @@
 import { SelectedCalendar } from "@prisma/client";
+import * as Sentry from "@sentry/nextjs";
 import { createHash } from "crypto";
 import _ from "lodash";
 
@@ -185,6 +186,12 @@ export const getBusyCalendarTimes = async (
     log.warn("Error fetching busy times from calendars", {
       calendars: selectedCalendars,
       credentials: withCredentials,
+    });
+    Sentry.captureException(error, {
+      extra: {
+        calendars: selectedCalendars,
+        credentials: withCredentials,
+      },
     });
   }
   return results.reduce((acc, availability) => acc.concat(availability), []);

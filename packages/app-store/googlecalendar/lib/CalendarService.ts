@@ -62,6 +62,7 @@ export default class GoogleCalendarService implements Calendar {
         // `Failed to refresh access token for Google Calendar: userId: ${credential.userId}`
         // );
         this.log.error("Error refreshing google token", err);
+        Sentry.captureException(err);
       }
       return myGoogleAuth;
     };
@@ -339,7 +340,10 @@ export default class GoogleCalendarService implements Calendar {
               },
             },
             (err, apires) => {
-              if (err) return reject(err);
+              if (err) {
+                Sentry.captureException(err);
+                return reject(err);
+              }
               // If there's no calendar we just skip
               if (!apires?.data.calendars) return resolve([]);
               const result = Object.values(apires.data.calendars).reduce((c, i) => {

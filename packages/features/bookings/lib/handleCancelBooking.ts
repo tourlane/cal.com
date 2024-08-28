@@ -6,6 +6,7 @@ import {
   WorkflowMethods,
   WorkflowReminder,
 } from "@prisma/client";
+import * as Sentry from "@sentry/nextjs";
 import { NextApiRequest } from "next";
 
 import { getCalendar } from "@calcom/app-store/_utils/getCalendar";
@@ -182,6 +183,7 @@ async function handler(req: NextApiRequest & { userId?: number }) {
       smsReminderNumber: bookingToDelete.smsReminderNumber || undefined,
     }).catch((e) => {
       console.error(`Error executing webhook for event: ${eventTrigger}, URL: ${webhook.subscriberUrl}`, e);
+      Sentry.captureException(e);
     })
   );
   await Promise.all(promises);
