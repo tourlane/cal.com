@@ -23,8 +23,9 @@ import { handlePayment } from "@calcom/app-store/stripepayment/lib/server";
 import { getEventTypeAppData } from "@calcom/app-store/utils";
 import { cancelScheduledJobs, scheduleTrigger } from "@calcom/app-store/zapier/lib/nodeScheduler";
 import EventManager from "@calcom/core/EventManager";
-import { getUserAvailability } from "@calcom/core/availability";
 import { getEventName } from "@calcom/core/event";
+import { getUserAvailability } from "@calcom/core/getUserAvailability";
+import dayjs from "@calcom/dayjs";
 import {
   sendAttendeeRequestEmail,
   sendOrganizerRequestEmail,
