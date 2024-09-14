@@ -187,12 +187,17 @@ export const getBusyCalendarTimes = async (
       calendars: selectedCalendars,
       credentials: withCredentials,
     });
+    /**
+    * Do not send this to Sentry. It's kind of an expected error that happens when a user is leaves Tourlane
+    * for example but they are still on Calcom.
+    *
     Sentry.captureException(error, {
       extra: {
         calendars: selectedCalendars,
         credentials: withCredentials,
       },
     });
+    */
   }
   return results.reduce((acc, availability) => acc.concat(availability), []);
 };
