@@ -46,10 +46,3 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           report-json: "lint-results/eslint_report.json"
           only-pr-files: false
-
-      - name: Upload ESLint report
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: lint-results
-          path: lint-results
