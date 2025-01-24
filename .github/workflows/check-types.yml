@@ -20,15 +20,14 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 2
 
-      - name: Use Node 16.x
+      - name: Install NodeJS
         uses: actions/setup-node@v3
-        
         with:
-          node-version: 16.x
+          node-version: 18.x
           cache: "yarn"
-      
+
       - name: Show info
         run: node -e "console.log(require('v8').getHeapStatistics())"
-      
+
       - run: yarn --frozen-lockfile
       - run: yarn type-check
