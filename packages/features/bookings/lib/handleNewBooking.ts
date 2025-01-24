@@ -277,6 +277,11 @@ async function handler(req: NextApiRequest & { userId?: number | undefined }) {
     ...reqBody
   } = extendedBookingCreateBody.parse(req.body);
 
+  if (userId && userId !== -1) {
+    // Add the currently logged in user's ID to the metadata. Just for debugging.
+    reqBody.metadata.bookedByUser = userId.toString();
+  }
+
   // handle dynamic user
   const dynamicUserList = Array.isArray(reqBody.user)
     ? getGroupName(reqBody.user)
