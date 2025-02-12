@@ -255,7 +255,9 @@ async function handler(req: NextApiRequest & { userId?: number }) {
     updatedBookings = updatedBookings.concat(allUpdatedBookings);
   } else {
     const metadata = (bookingToDelete.metadata || {}) as any;
-    metadata["canceledByUser"] = userId;
+    if (userId && userId !== -1) {
+      metadata["canceledByUser"] = userId;
+    }
 
     const updatedBooking = await prisma.booking.update({
       where: {
