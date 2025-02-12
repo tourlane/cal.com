@@ -279,7 +279,7 @@ async function handler(req: NextApiRequest & { userId?: number | undefined }) {
 
   if (userId && userId !== -1) {
     // Add the currently logged in user's ID to the metadata. Just for debugging.
-    reqBody.metadata.bookedByUser = userId.toString();
+    reqBody.metadata["booked_by_user"] = userId.toString();
   }
 
   // handle dynamic user
