@@ -43,6 +43,7 @@ async function handler(req: NextApiRequest & { userId?: number }) {
       ...bookingMinimalSelect,
       recurringEventId: true,
       userId: true,
+      metadata: true,
       user: {
         select: {
           id: true,
@@ -253,6 +254,11 @@ async function handler(req: NextApiRequest & { userId?: number }) {
     });
     updatedBookings = updatedBookings.concat(allUpdatedBookings);
   } else {
+    const metadata = (bookingToDelete.metadata || {}) as any;
+    if (userId && userId !== -1) {
+      metadata["canceledByUser"] = userId;
+    }
+
     const updatedBooking = await prisma.booking.update({
       where: {
         id,
@@ -261,6 +267,7 @@ async function handler(req: NextApiRequest & { userId?: number }) {
       data: {
         status: BookingStatus.CANCELLED,
         cancellationReason: cancellationReason,
+        metadata: metadata,
       },
       select: {
         startTime: true,
