@@ -169,29 +169,17 @@ export const getTimeSlotsCompact = ({
 };
 
 const getSlots = ({ inviteeDate, frequency, minimumBookingNotice, workingHours, eventLength }: GetSlots) => {
-  // current date in invitee tz
   const startDate = dayjs().add(minimumBookingNotice, "minute");
-  // This code is ran client side, startOf() does some conversions based on the
-  // local tz of the client. Sometimes this shifts the day incorrectly.
   const startOfInviteeDay = inviteeDate.startOf("day");
-  // checks if the start date is in the past
-
-  /**
-   *  TODO: change "day" for "hour" to stop displaying 1 day before today
-   * This is displaying a day as available as sometimes difference between two dates is < 24 hrs.
-   * But when doing timezones an available day for an owner can be 2 days available in other users tz.
-   *
-   * */
-  if (inviteeDate.isBefore(startDate, "day")) {
-    return [];
-  }
-
   const computedLocalAvailability: TimeFrame[] = workingHours.map((workingHour) => {
     return {
       startTime: workingHour.startTime,
       endTime: workingHour.endTime,
     };
   });
+
+  console.log("computedLocalAvailability", computedLocalAvailability);
+  console.log("workingHours", workingHours);
 
   return buildSlots({ computedLocalAvailability, startOfInviteeDay, startDate, frequency, eventLength });
 };
