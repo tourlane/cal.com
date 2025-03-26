@@ -6,7 +6,7 @@ import { getWorkingHours } from "./availability";
 export type GetSlots = {
   inviteeDate: Dayjs;
   frequency: number;
-  workingHours: WorkingHours[];
+  workingHours: WorkingHours;
   minimumBookingNotice: number;
   eventLength: number;
 };
@@ -63,12 +63,12 @@ const splitAvailableTime = (
 
 function buildSlots({
   startOfInviteeDay,
-  computedLocalAvailability,
+  workingHours,
   frequency,
   eventLength,
   startDate,
 }: {
-  computedLocalAvailability: TimeFrame[];
+  workingHours: WorkingHours;
   startOfInviteeDay: Dayjs;
   startDate: Dayjs;
   frequency: number;
@@ -76,8 +76,8 @@ function buildSlots({
 }) {
   const slots: Dayjs[] = [];
   const slotsInMinutes: TimeFrame[] = splitAvailableTime(
-    computedLocalAvailability[0].startTime,
-    computedLocalAvailability[0].endTime,
+    workingHours.startTime,
+    workingHours.endTime,
     frequency,
     eventLength
   );
@@ -172,17 +172,7 @@ export const getTimeSlotsCompact = ({
 const getSlots = ({ inviteeDate, frequency, minimumBookingNotice, workingHours, eventLength }: GetSlots) => {
   const startDate = dayjs().add(minimumBookingNotice, "minute");
   const startOfInviteeDay = inviteeDate.startOf("day");
-  const computedLocalAvailability: TimeFrame[] = workingHours.map((workingHour) => {
-    return {
-      startTime: workingHour.startTime,
-      endTime: workingHour.endTime,
-    };
-  });
-
-  console.log("computedLocalAvailability", computedLocalAvailability);
-  console.log("workingHours", workingHours);
-
-  return buildSlots({ computedLocalAvailability, startOfInviteeDay, startDate, frequency, eventLength });
+  return buildSlots({ workingHours, startOfInviteeDay, startDate, frequency, eventLength });
 };
 
 export default getSlots;

@@ -10,6 +10,7 @@ import { performance } from "@calcom/lib/server/perfObserver";
 import getTimeSlots, { getTimeSlotsCompact, slotsOverlap } from "@calcom/lib/slots";
 import prisma, { availabilityUserSelect } from "@calcom/prisma";
 import { EventTypeMetaDataSchema } from "@calcom/prisma/zod-utils";
+import { WorkingHours } from "@calcom/types/schedule";
 
 import { TRPCError } from "@trpc/server";
 
@@ -318,47 +319,35 @@ export async function getSchedule(input: z.infer<typeof getScheduleSchema>, ctx:
   const userBusyTimesByDay =
     busyTimesByUser[users[0]?.id] || ({} as Record<string, { start: Dayjs; end: Dayjs }[]>);
 
-  console.log(`startTime: ${startTime}`);
-  console.log(`endTime: ${endTime}`);
-
   do {
-    console.log(`currentCheckedTime: ${currentCheckedTime}`);
     const startGetSlots = performance.now();
     // standard working hours for all users. Mon-Sun 7-22 Berlin time.
     const days = [0, 1, 2, 3, 4, 5, 6];
     const shiftStartHour = 7;
     const shiftEndHour = 22;
-    const workingHours = getWorkingHours({}, [
+    const shiftStartTime = currentCheckedTime
+      .tz("Europe/Berlin")
+      .set("hour", shiftStartHour)
+      .set("minute", 0)
+      .set("second", 0);
+    const shiftEndTime = currentCheckedTime
+      .tz("Europe/Berlin")
+      .set("hour", shiftEndHour)
+      .set("minute", 0)
+      .set("second", 0);
+    const workingHours: WorkingHours = getWorkingHours({}, [
       {
         days,
-        startTime: currentCheckedTime
-          .tz("Europe/Berlin")
-          .set("hour", shiftStartHour)
-          .set("minute", 0)
-          .set("second", 0),
-        endTime: currentCheckedTime
-          .tz("Europe/Berlin")
-          .set("hour", shiftEndHour)
-          .set("minute", 0)
-          .set("second", 0),
+        startTime: shiftStartTime,
+        endTime: shiftEndTime,
       },
-    ]);
+    ])[0];
     // get slots retrieves the available times for a given day
     const timeSlots = singleHostMode
       ? getTimeSlotsCompact({
           slotDay: currentCheckedTime,
-          shiftStart: currentCheckedTime
-            .tz("Europe/Berlin")
-            .set("hour", shiftStartHour)
-            .set("minute", 0)
-            .set("second", 0)
-            .utc(),
-          shiftEnd: currentCheckedTime
-            .tz("Europe/Berlin")
-            .set("hour", shiftEndHour)
-            .set("minute", 0)
-            .set("second", 0)
-            .utc(),
+          shiftStart: shiftStartTime.utc(),
+          shiftEnd: shiftEndTime.utc(),
           days,
           eventLength,
           minStartTime: dayjs().add(minimumBookingNotice, "minute"),
