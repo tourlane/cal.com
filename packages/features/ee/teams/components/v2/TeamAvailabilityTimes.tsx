@@ -19,10 +19,11 @@ interface Props {
   className?: string;
 }
 
+// Unused feature. Not needed.
 export default function TeamAvailabilityTimes(props: Props) {
   const { t } = useLocale();
 
-  const { data, isLoading } = trpc.viewer.teams.getMemberAvailability.useQuery(
+  const { isLoading } = trpc.viewer.teams.getMemberAvailability.useQuery(
     {
       teamId: props.teamId,
       memberId: props.memberId,
@@ -35,15 +36,7 @@ export default function TeamAvailabilityTimes(props: Props) {
     }
   );
 
-  const times = !isLoading
-    ? getSlots({
-        frequency: props.frequency,
-        inviteeDate: props.selectedDate,
-        workingHours: data?.workingHours || [],
-        minimumBookingNotice: 0,
-        eventLength: props.frequency,
-      })
-    : [];
+  const times = [] as any[];
 
   return (
     <div className={classNames("min-w-60 flex-grow pl-0", props.className)}>
