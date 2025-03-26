@@ -21,6 +21,7 @@ export type GetSlotsCompact = {
   busyTimes: { start: Dayjs; end: Dayjs }[];
 };
 
+// slots in minute format, e.g. startTime: 60, endTime: 90 would be 01:00 - 01:30.
 export type TimeFrame = { startTime: number; endTime: number };
 
 const minimumOfOne = (input: number) => (input < 1 ? 1 : input);
@@ -73,15 +74,15 @@ function buildSlots({
   frequency: number;
   eventLength: number;
 }) {
-  const slotsTimeFrameAvailable: TimeFrame[] = [];
-
-  computedLocalAvailability.forEach((item) => {
-    slotsTimeFrameAvailable.push(...splitAvailableTime(item.startTime, item.endTime, frequency, eventLength));
-  });
-
   const slots: Dayjs[] = [];
+  const slotsInMinutes: TimeFrame[] = splitAvailableTime(
+    computedLocalAvailability[0].startTime,
+    computedLocalAvailability[0].endTime,
+    frequency,
+    eventLength
+  );
 
-  slotsTimeFrameAvailable.forEach((item) => {
+  slotsInMinutes.forEach((item) => {
     const slot = startOfInviteeDay.add(item.startTime, "minute");
     // Validating slot its not on the past
     if (!slot.isBefore(startDate)) {
