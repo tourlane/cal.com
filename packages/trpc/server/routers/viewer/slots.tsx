@@ -302,17 +302,6 @@ export async function getSchedule(input: z.infer<typeof getScheduleSchema>, ctx:
     endTime: endTime.format(),
   });
 
-  // standard working hours for all users. Mon-Sun 7-22 Berlin time.
-  const days = [0, 1, 2, 3, 4, 5, 6];
-  const shiftStartHour = 7;
-  const shiftEndHour = 22;
-  const workingHours = getWorkingHours({}, [
-    {
-      days,
-      startTime: dayjs().tz("Europe/Berlin").set("hour", shiftStartHour).set("minute", 0).set("second", 0),
-      endTime: dayjs().tz("Europe/Berlin").set("hour", shiftEndHour).set("minute", 0).set("second", 0),
-    },
-  ]);
   const minimumBookingNotice = input.minbn || eventType.minimumBookingNotice;
 
   const computedAvailableSlots: Record<string, Slot[]> = {};
@@ -329,8 +318,31 @@ export async function getSchedule(input: z.infer<typeof getScheduleSchema>, ctx:
   const userBusyTimesByDay =
     busyTimesByUser[users[0]?.id] || ({} as Record<string, { start: Dayjs; end: Dayjs }[]>);
 
+  console.log(`startTime: ${startTime}`);
+  console.log(`endTime: ${endTime}`);
+
   do {
+    console.log(`currentCheckedTime: ${currentCheckedTime}`);
     const startGetSlots = performance.now();
+    // standard working hours for all users. Mon-Sun 7-22 Berlin time.
+    const days = [0, 1, 2, 3, 4, 5, 6];
+    const shiftStartHour = 7;
+    const shiftEndHour = 22;
+    const workingHours = getWorkingHours({}, [
+      {
+        days,
+        startTime: currentCheckedTime
+          .tz("Europe/Berlin")
+          .set("hour", shiftStartHour)
+          .set("minute", 0)
+          .set("second", 0),
+        endTime: currentCheckedTime
+          .tz("Europe/Berlin")
+          .set("hour", shiftEndHour)
+          .set("minute", 0)
+          .set("second", 0),
+      },
+    ]);
     // get slots retrieves the available times for a given day
     const timeSlots = singleHostMode
       ? getTimeSlotsCompact({
@@ -412,7 +424,7 @@ export async function getSchedule(input: z.infer<typeof getScheduleSchema>, ctx:
 
     computedAvailableSlots[timeToDayFormat(currentCheckedTime)] = timeSlotsForDay;
     currentCheckedTime = currentCheckedTime.add(1, "day");
-  } while (currentCheckedTime.isBefore(endTime));
+  } while (currentCheckedTime.isSameOrBefore(endTime, "day"));
 
   logger.debug(`getSlots took ${getSlotsTime}ms and executed ${getSlotsCount} times`);
 
