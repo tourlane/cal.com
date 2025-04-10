@@ -313,7 +313,7 @@ const AvailabilityPage = ({ profile, eventType, ...restProps }: Props) => {
   const isEmbed = useIsEmbed(restProps.isEmbed);
   const { data: session } = useSession();
   const query = dateQuerySchema.parse(router.query);
-  const { rescheduleUid } = query;
+  const { rescheduleUid, timeZone: tzFromQuery } = query;
   useTheme(profile.theme);
   const { t } = useLocale();
   const availabilityDatePickerEmbedStyles = useEmbedStyles("availabilityDatePicker");
@@ -340,7 +340,7 @@ const AvailabilityPage = ({ profile, eventType, ...restProps }: Props) => {
   );
 
   useEffect(() => {
-    setTimeZone(localStorageTimeZone() || dayjs.tz.guess());
+    setTimeZone(tzFromQuery || localStorageTimeZone() || dayjs.tz.guess());
   }, []);
 
   const [recurringEventCount, setRecurringEventCount] = useState(eventType.recurringEvent?.count);
