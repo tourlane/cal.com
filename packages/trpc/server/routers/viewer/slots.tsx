@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { BusyTimes, getBusyTimesByUserAndDay } from "@calcom/core/getBusyTimes";
 import dayjs, { Dayjs } from "@calcom/dayjs";
-import { getWorkingHours } from "@calcom/lib/availability";
+import { getWorkingHours, MINUTES_DAY_START, MINUTES_DAY_END } from "@calcom/lib/availability";
 import { getDefaultEvent } from "@calcom/lib/defaultEvents";
 import logger from "@calcom/lib/logger";
 import { performance } from "@calcom/lib/server/perfObserver";
@@ -302,17 +302,14 @@ export async function getSchedule(input: z.infer<typeof getScheduleSchema>, ctx:
     endTime: endTime.format(),
   });
 
-  // standard working hours for all users. Mon-Sun 7-22 Berlin time.
   const days = [0, 1, 2, 3, 4, 5, 6];
-  const shiftStartHour = 7;
-  const shiftEndHour = 22;
-  const workingHours = getWorkingHours({}, [
+  const workingHours = [
     {
       days,
-      startTime: dayjs().tz("Europe/Berlin").set("hour", shiftStartHour).set("minute", 0).set("second", 0),
-      endTime: dayjs().tz("Europe/Berlin").set("hour", shiftEndHour).set("minute", 0).set("second", 0),
+      startTime: MINUTES_DAY_START,
+      endTime: MINUTES_DAY_END,
     },
-  ]);
+  ];
   const minimumBookingNotice = input.minbn || eventType.minimumBookingNotice;
 
   const computedAvailableSlots: Record<string, Slot[]> = {};
@@ -335,18 +332,8 @@ export async function getSchedule(input: z.infer<typeof getScheduleSchema>, ctx:
     const timeSlots = singleHostMode
       ? getTimeSlotsCompact({
           slotDay: currentCheckedTime,
-          shiftStart: currentCheckedTime
-            .tz("Europe/Berlin")
-            .set("hour", shiftStartHour)
-            .set("minute", 0)
-            .set("second", 0)
-            .utc(),
-          shiftEnd: currentCheckedTime
-            .tz("Europe/Berlin")
-            .set("hour", shiftEndHour)
-            .set("minute", 0)
-            .set("second", 0)
-            .utc(),
+          shiftStart: currentCheckedTime.startOf("day"),
+          shiftEnd: currentCheckedTime.endOf("day"),
           days,
           eventLength,
           minStartTime: dayjs().add(minimumBookingNotice, "minute"),
