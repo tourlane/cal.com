@@ -36,7 +36,7 @@ import {
 import { scheduleWorkflowReminders } from "@calcom/features/ee/workflows/lib/reminders/reminderScheduler";
 import getWebhooks from "@calcom/features/webhooks/lib/getWebhooks";
 import { isPrismaObjOrUndefined, parseRecurringEvent } from "@calcom/lib";
-import { getDefaultEvent, getGroupName, getUsernameList } from "@calcom/lib/defaultEvents";
+import { getDefaultEvent, getUsernameList } from "@calcom/lib/defaultEvents";
 import { getErrorFromUnknown } from "@calcom/lib/errors";
 import getStripeAppData from "@calcom/lib/getStripeAppData";
 import { HttpError } from "@calcom/lib/http-error";
@@ -282,10 +282,8 @@ async function handler(req: NextApiRequest & { userId?: number | undefined }) {
     reqBody.metadata.bookedByUser = userId.toString();
   }
 
-  // handle dynamic user
-  const dynamicUserList = Array.isArray(reqBody.user)
-    ? getGroupName(reqBody.user)
-    : getUsernameList(reqBody.user);
+  // reqBody.user can be a string or an array of strings
+  const userList = getUsernameList(reqBody.user);
   const tAttendees = await getTranslation(language ?? "en", "common");
   const tGuests = await getTranslation("en", "common");
   log.debug(`Booking eventType ${eventTypeId} started`);
@@ -331,11 +329,11 @@ async function handler(req: NextApiRequest & { userId?: number | undefined }) {
   }
 
   let users =
-    dynamicUserList.length > 0
+    userList.length > 0
       ? await prisma.user.findMany({
           where: {
             username: {
-              in: dynamicUserList,
+              in: userList,
             },
           },
           ...userSelect,
