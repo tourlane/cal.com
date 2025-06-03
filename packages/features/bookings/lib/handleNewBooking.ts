@@ -253,6 +253,7 @@ async function ensureAvailableUsers(
 
     if (isAvailableToBeBooked) {
       availableUsers.push(user);
+      return availableUsers;
     }
   }
   if (!availableUsers.length) {
