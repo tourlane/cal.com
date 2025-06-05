@@ -263,6 +263,8 @@ export async function getSchedule(input: z.infer<typeof getScheduleSchema>, ctx:
 
   let startTime =
     timeZone === "Etc/GMT" ? dayjs.utc(input.startTime) : dayjs(input.startTime).utc().tz(timeZone);
+  // There is a weird bug where wrong availabilities are returned when startTime is e.g. 08:00:00.
+  startTime = startTime.startOf("day");
   let endTime = timeZone === "Etc/GMT" ? dayjs.utc(input.endTime) : dayjs(input.endTime).utc().tz(timeZone);
 
   const minimumStartTime = getMinimumStartTime(timeZone, {
