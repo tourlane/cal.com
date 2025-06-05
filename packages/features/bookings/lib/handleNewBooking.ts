@@ -345,11 +345,14 @@ async function handler(req: NextApiRequest & { userId?: number | undefined }) {
   const userOrderMap = userList.reduce((acc, username, index) => {
     acc[username] = index;
     return acc;
-  });
+  }, {} as Record<string, number>);
 
   // users should have same order as userList
   users = users.sort((a, b) => {
-    (userOrderMap[a.username] ?? Infinity) - (userOrderMap[b.username] ?? Infinity);
+    if (a.username === null || b.username === null) {
+      return 0;
+    }
+    return (userOrderMap[a.username] ?? 0) - (userOrderMap[b.username] ?? 0);
   });
 
   const isDynamicAllowed = !users.some((user) => !user.allowDynamicBooking);
