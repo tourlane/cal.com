@@ -340,6 +340,21 @@ async function handler(req: NextApiRequest & { userId?: number | undefined }) {
           ...userSelect,
         })
       : eventType.users;
+
+  // Used to order the users returned from the database.
+  const userOrderMap = userList.reduce((acc, username, index) => {
+    acc[username] = index;
+    return acc;
+  }, {} as Record<string, number>);
+
+  // users should have same order as userList
+  users = users.sort((a, b) => {
+    if (a.username === null || b.username === null) {
+      return 0;
+    }
+    return (userOrderMap[a.username] ?? 0) - (userOrderMap[b.username] ?? 0);
+  });
+
   const isDynamicAllowed = !users.some((user) => !user.allowDynamicBooking);
   if (!isDynamicAllowed && !eventTypeId) {
     throw new HttpError({
