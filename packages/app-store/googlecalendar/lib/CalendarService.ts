@@ -379,22 +379,18 @@ export default class GoogleCalendarService implements Calendar {
         auth: myGoogleAuth,
       });
 
-      calendar.calendarList
-        .list()
-        .then((cals) => {
-          resolve(
-            cals.data.items?.map((cal) => {
-              const calendar: IntegrationCalendar = {
-                externalId: cal.id ?? "No id",
-                integration: this.integrationName,
-                name: cal.summary ?? "No name",
-                primary: cal.primary ?? false,
-                readOnly: !(cal.accessRole === "reader" || cal.accessRole === "owner") && true,
-                email: cal.id ?? "",
-              };
-              return calendar;
-            }) || []
-          );
+      calendar.calendars
+        .get({ calendarId: "primary" })
+        .then((cal) => {
+          const integrationCalendar: IntegrationCalendar = {
+            externalId: cal.data.id ?? "No id",
+            integration: this.integrationName,
+            name: cal.data.summary ?? "No name",
+            primary: true,
+            readOnly: false,
+            email: cal.data.id ?? "",
+          };
+          resolve([integrationCalendar]);
         })
         .catch((err: Error) => {
           this.log.error(`There was an error in "listCalendars" contacting google calendar service:  ${err}`);
