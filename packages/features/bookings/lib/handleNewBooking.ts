@@ -257,7 +257,7 @@ async function ensureAvailableUsers(
     }
   }
   if (!availableUsers.length) {
-    throw new Error("No available users found.");
+    throw new HttpError({ statusCode: 409, message: "No available users found." });
   }
   return availableUsers;
 }
