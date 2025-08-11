@@ -50,54 +50,5 @@ export const EventTeamTab = ({
   const teamMembersToValues = useMemo(() => {
     return teamMembers.map(mapUserToValue);
   }, [teamMembers]);
-  return (
-    <div>
-      {team && (
-        <div className="space-y-3">
-          <div className="flex flex-col pb-8">
-            <Label>{t("scheduling_type")}</Label>
-            <Controller
-              name="schedulingType"
-              control={formMethods.control}
-              render={({ field: { value, onChange } }) => (
-                <Select
-                  options={schedulingTypeOptions}
-                  value={schedulingTypeOptions.find((opt) => opt.value === value)}
-                  className="w-full"
-                  onChange={(val) => {
-                    onChange(val?.value);
-                  }}
-                />
-              )}
-            />
-          </div>
-
-          <div className="flex flex-col">
-            <Label>{t("team")}</Label>
-            <Controller
-              name="users"
-              control={formMethods.control}
-              defaultValue={eventType.users.map((user) => user.id.toString())}
-              render={({ field: { onChange, value } }) => (
-                <CheckedTeamSelect
-                  isDisabled={false}
-                  onChange={(options) => onChange(options.map((user) => user.value))}
-                  value={value
-                    .map(
-                      (userId) =>
-                        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                        teamMembers.map(mapUserToValue).find((member) => member.value === userId)!
-                    )
-                    .filter(Boolean)}
-                  controlShouldRenderValue={false}
-                  options={teamMembersToValues}
-                  placeholder={t("add_attendees")}
-                />
-              )}
-            />
-          </div>
-        </div>
-      )}
-    </div>
-  );
+  return <div>{team && <div className="space-y-3">What are you looking for?</div>}</div>;
 };
